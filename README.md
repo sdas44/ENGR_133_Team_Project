@@ -1,2 +1,2 @@
 # ENGR_133_Team_Project
-The official repository for team 5 in ENGR 133
+The official repository for LC5 Team 5 in ENGR 133
