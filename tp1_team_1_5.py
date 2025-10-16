@@ -4,7 +4,7 @@ Course Number: ENGR 13300
 Semester: e.g. Fall 2025
 
 Description:
-    This program calculates the actual age in years and seconds from the days elapse since the last birthday
+    This program displays an image the user provides
 
 Assignment Information:
     Assignment:     team project 1 task 1
