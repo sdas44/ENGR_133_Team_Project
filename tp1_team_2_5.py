@@ -7,7 +7,7 @@ Description:
     This program grabs the binary message from the image the user provides
 
 Assignment Information:
-    Assignment:     team project 1 task 1
+    Assignment:     tp1 team 2
     Team ID:        LC05, 05
     Author:         Samarth Das, das316@purdue.edu
     Date:           10/9/2025
@@ -36,53 +36,52 @@ Academic Integrity Statement:
 import pathlib
 import numpy as np
 from PIL import Image, ImageOps
-from tp1_team_1_5 import image_to_array
+from tp1_team_1_5 import load_img
 import matplotlib.pyplot as plt
 
 def clean_image(arr):
   # resize the image to fit within 100x100 canvas
+  # check to see whether its grey scale or color
   if arr.ndim == 3:
-    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]}, {arr.shape[2]-1})")
+    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]}, {arr.shape[2]})")
   else:
     print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]})")
   aspect_ratio = arr.shape[0] / arr.shape[1]
   img = Image.fromarray(arr)
   
+  #if the image is longer than height
   if arr.shape[0] > arr.shape[1]:
-    if arr.ndim == 3:
-      print(f"Resized image to: ({100}, {int(100 / aspect_ratio)}, {arr.shape[2]-1})")
-    else:
-      print(f"Resized image to: ({100}, {int(100 / aspect_ratio)})")
-    resized_image = img.resize((100 / aspect_ratio, 100), Image.Resampling.BILINEAR)
+    print(f"Resized image to: ({100}, {int(100 / aspect_ratio)})")
+    resized_image = img.resize((int(100 / aspect_ratio), 100), Image.Resampling.BILINEAR)
     resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
+  # if height is longer and width
   elif arr.shape[0] < arr.shape[1]:
-    if arr.ndim == 3:
-      print(f"Resized image to: ({int(100 * aspect_ratio)}, {100}, {arr.shape[2]-1})")
-    else:
-      print(f"Resized image to: ({int(100 * aspect_ratio)}, {100})")
+    print(f"Resized image to: ({int(100 * aspect_ratio)}, {100})")
     resized_image = img.resize((100, int(100 * aspect_ratio)), Image.Resampling.BILINEAR)
     resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
+  #if its a square then just scale it to 100,100
   else:
-    if arr.ndim == 3:
-      print(f"Resized image to: ({100}, {100}, {arr.shape[2]-1})")
-    else:
-      print(f"Resized image to: ({100}, {100})")
-    resized_image = img.resized((100, 100), Image.Resampling.BILINEAR)
+    print(f"Resized image to: ({100}, {100})")
+    resized_image = img.resize((100, 100), Image.Resampling.BILINEAR)
     resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
 
 
 def main():
-  image = pathlib.Path(input("Enter the path of the image you want to load: "))
-  img_array = image_to_array(image)
+  #ask input from the user
+  image = pathlib.Path(input("Enter the path of the image you want to clean: "))
+  img_array = load_img(image)
   img_array = clean_image(img_array)
-  
-  print("Image shape after cleaning: (100, 100)")
+  # return final result in the program
+  if img_array.ndim == 3:
+    print(f"Image shape after cleaning: (100, 100, {img_array.shape[2]})")
+  else:
+    print("Image shape after cleaning: (100, 100)")
   
   if img_array.ndim == 2:
     plt.imshow(img_array, cmap='gray')
