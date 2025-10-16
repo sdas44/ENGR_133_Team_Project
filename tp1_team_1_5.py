@@ -7,7 +7,7 @@ Description:
     This program displays an image the user provides
 
 Assignment Information:
-    Assignment:     team project 1 task 1
+    Assignment:     tp1 team 1
     Team ID:        LC05, 05
     Author:         Samarth Das, das316@purdue.edu
     Date:           10/9/2025
@@ -39,32 +39,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 
-def image_to_array(image_path):
+def load_img(image_path):
   """Converts an image to a numpy array."""
   img = Image.open(image_path)
   img_array = np.array(img)
-  img_array = normalize_array_1(img_array)
-  img_array = linearization_array(img_array)
-  img_array = normalize_array_255(img_array)
-  return img_array
+  img_array = linearization_array(img_array) #0-1 normalization already exists within the function
+  img_array = img_array * 255
+  if img_array.shape[-1]==4:
+    return img_array[:, :, :3].astype(np.uint8)
+  return img_array.astype(np.uint8)
 
-def normalize_array_1(arr):
-  """Normalize a numpy array to the range [0, 1]"""
-  arr_min = np.min(arr)
-  arr_max = np.max(arr)
-  normalized_arr = (arr - arr_min) / (arr_max - arr_min)
-  return normalized_arr
+# def normalize_array_1(arr):
+#   """Normalize a numpy array to the range [0, 1]"""
+#   arr_min = np.min(arr)
+#   arr_max = np.max(arr)
+#   normalized_arr = (arr - arr_min) / (arr_max - arr_min)
+#   return normalized_arr
 
-def normalize_array_255(arr):
-  """Normalize a numpy array to the range [0, 255]"""
-  arr_min = np.min(arr)
-  arr_max = np.max(arr)
-  normalized_arr = (arr - arr_min) / (arr_max - arr_min) * 255
-  return normalized_arr.astype(np.uint8)
+# def normalize_array_255(arr):
+#   """Normalize a numpy array to the range [0, 255]"""
+#   arr_min = np.min(arr)
+#   arr_max = np.max(arr)
+#   normalized_arr = (arr - arr_min) / (arr_max - arr_min) * 255
+#   return normalized_arr.astype(np.uint8)
 
 def linearization_array(arr):
   # linearize the values based on the conditions of the normalized_array_1
-  arr = normalize_array_1(arr)
+  arr = arr / 255.0
+  
   #if array is grayscale then loop through 2 dimensions
   if arr.ndim == 2:
     for i in range(arr.shape[0]):
@@ -86,23 +88,23 @@ def linearization_array(arr):
           
   
         
-def grayscale_conversion(arr):
-  arr = normalize_array_255(arr)
+def rgb_to_grayscale(arr):
+  # converts rgb to grayscale
   gry_arry = np.zeros((arr.shape[0], arr.shape[1]))
   for i in range(arr.shape[0]):
     for j in range(arr.shape[1]):
       gry_arry[i][j] = int(0.2126 * arr[i][j][0] + 0.7152 * arr[i][j][1] + 0.0722 * arr[i][j][2])
       
-  return gry_arry
+  return gry_arry.astype(np.uint8)
 
 def main():
   image = pathlib.Path(input("Enter the path of the image you want to load: "))
-  img_array = image_to_array(image)
+  img_array = load_img(image)
   if(img_array.ndim == 3):
-    grayscl_request = input("Would you like to convert to grayscale? ")
+    grayscl_request = input("Would you like to convert to grayscale?\n")
     if grayscl_request.lower() in ['yes']:
-      img_array = grayscale_conversion(img_array)
-  
+      img_array = rgb_to_grayscale(img_array)
+  # display the image based on the dimensions in the array
   if img_array.ndim == 2:
     plt.imshow(img_array, cmap='gray')
   else:
