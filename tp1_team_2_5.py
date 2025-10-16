@@ -35,66 +35,59 @@ Academic Integrity Statement:
 """
 import pathlib
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
+from tp1_team_1_5 import image_to_array
+import matplotlib.pyplot as plt
 
-def image_to_array(image_path):
-  """Converts an image to a numpy array."""
-  img = Image.open(image_path)
-  img_array = np.array(img)
-  return img_array
-
-def string_to_binary(sequence):
-  """Convert a string to its binary representation."""
-  binary_string = ""
-  for char in sequence:
-    binary_string += format(ord(char), '08b') #08b mean 8 bit binary, ord(char) gives ascii value for the character
-    
-  return binary_string
-
-def normalize_array(arr):
-  """Normalize a numpy array to the range [0, 255]"""
-  arr_min = np.min(arr)
-  arr_max = np.max(arr)
-  normalized_arr = (arr - arr_min) / (arr_max - arr_min) * 255
-  return normalized_arr.astype(np.uint8)
-
-def find_binary_message(img_array, start_sequence, end_sequence):
-  """Find the binary message hidden in the image array."""
-  binary_message = ""
-  if img_array.ndim == 2:  # Grayscale image
-    rows, cols = img_array.shape
-    for c in range(cols):
-      for r in range(rows):
-        pixel_value = img_array[r, c]
-        lsb = pixel_value & 1  # Get the least significant bit
-        binary_message += str(lsb)
-  else:  # Color image
-    rows, cols, channels = img_array.shape
-    for c in range(cols):
-      for r in range(rows):
-        for ch in range(channels):
-          pixel_value = img_array[r, c, ch]
-          lsb = pixel_value & 1  # Get the least significant bit
-          binary_message += str(lsb)
-        
-  # check if the start sequence and end sequence are in the binary message
-  start_index = binary_message.find(start_sequence)
-  end_index = binary_message.find(end_sequence, start_index + len(start_sequence))
-  if start_index != -1 and end_index != -1:
-    return binary_message[start_index + len(start_sequence):end_index]
+def clean_image(arr):
+  # resize the image to fit within 100x100 canvas
+  if arr.ndim == 3:
+    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]}, {arr.shape[2]-1})")
   else:
-    return "Start or end sequence not found in the image."
+    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]})")
+  aspect_ratio = arr.shape[0] / arr.shape[1]
+  img = Image.fromarray(arr)
+  
+  if arr.shape[0] > arr.shape[1]:
+    if arr.ndim == 3:
+      print(f"Resized image to: ({100}, {int(100 / aspect_ratio)}, {arr.shape[2]-1})")
+    else:
+      print(f"Resized image to: ({100}, {int(100 / aspect_ratio)})")
+    resized_image = img.resize((100, 100 / aspect_ratio), Image.Resampling.BILINEAR)
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image_arr = np.array(resized_image)
+    return resized_image_arr
+  elif arr.shape[0] < arr.shape[1]:
+    if arr.ndim == 3:
+      print(f"Resized image to: ({int(100 * aspect_ratio)}, {100}, {arr.shape[2]-1})")
+    else:
+      print(f"Resized image to: ({int(100 * aspect_ratio)}, {100})")
+    resized_image = img.resize((int(100 * aspect_ratio), 100), Image.Resampling.BILINEAR)
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image_arr = np.array(resized_image)
+    return resized_image_arr
+  else:
+    if arr.ndim == 3:
+      print(f"Resized image to: ({100}, {100}, {arr.shape[2]-1})")
+    else:
+      print(f"Resized image to: ({100}, {100})")
+    resized_image = img.resized((100, 100), Image.Resampling.BILINEAR)
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image_arr = np.array(resized_image)
+    return resized_image_arr
+
 
 def main():
   image = pathlib.Path(input("Enter the path of the image you want to load: "))
   img_array = image_to_array(image)
-  img_array = normalize_array(img_array)
-  start_sequence = input("Enter the start sequence: ")
-  end_sequence = input("Enter the end sequence: ")
-  binary_start_sequence = string_to_binary(start_sequence)
-  binary_end_sequence = string_to_binary(end_sequence)
-  binary_message = find_binary_message(img_array, binary_start_sequence, binary_end_sequence)
-  print("Extracted Message: ", binary_message)
-
+  img_array = clean_image(img_array)
+  
+  print("Image shape after cleaning: (100, 100)")
+  
+  if img_array.ndim == 2:
+    plt.imshow(img_array, cmap='gray')
+  else:
+    plt.imshow(img_array)
+  plt.show()
 if __name__ == "__main__":
     main()

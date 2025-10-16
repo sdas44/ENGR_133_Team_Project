@@ -43,20 +43,67 @@ def image_to_array(image_path):
   """Converts an image to a numpy array."""
   img = Image.open(image_path)
   img_array = np.array(img)
+  img_array = normalize_array_1(img_array)
+  img_array = linearization_array(img_array)
+  img_array = normalize_array_255(img_array)
   return img_array
 
-def normalize_array(arr):
+def normalize_array_1(arr):
+  """Normalize a numpy array to the range [0, 1]"""
+  arr_min = np.min(arr)
+  arr_max = np.max(arr)
+  normalized_arr = (arr - arr_min) / (arr_max - arr_min)
+  return normalized_arr
+
+def normalize_array_255(arr):
   """Normalize a numpy array to the range [0, 255]"""
   arr_min = np.min(arr)
   arr_max = np.max(arr)
   normalized_arr = (arr - arr_min) / (arr_max - arr_min) * 255
   return normalized_arr.astype(np.uint8)
 
+def linearization_array(arr):
+  # linearize the values based on the conditions of the normalized_array_1
+  arr = normalize_array_1(arr)
+  #if array is grayscale then loop through 2 dimensions
+  if arr.ndim == 2:
+    for i in range(arr.shape[0]):
+      for j in range(arr.shape[1]):
+        if arr[i][j] <= 0.04045:
+          arr[i][j] = arr[i][j] / 12.92
+        else:
+          arr[i][j] = ((arr[i][j] + 0.055) / 1.055) ** 2.4
+    return arr
+  # loop through all pixels
+  for i in range(arr.shape[0]):
+    for j in range(arr.shape[1]):
+      for ch in range(arr.shape[2]):
+        if arr[i][j][ch] <= 0.04045:
+          arr[i][j][ch] = arr[i][j][ch] / 12.92
+        else:
+          arr[i][j][ch] = ((arr[i][j][ch] + 0.055) / 1.055) ** 2.4
+  return arr
+          
+  
+        
+def grayscale_conversion(arr):
+  arr = normalize_array_255(arr)
+  gry_arry = np.zeros((arr.shape[0], arr.shape[1]), dtype=np.uint8)
+  for i in range(arr.shape[0]):
+    for j in range(arr.shape[1]):
+      gry_arry[i][j] = int(0.299 * arr[i][j][0] + 0.587 * arr[i][j][1] + 0.114 * arr[i][j][2])
+      
+  return gry_arry
+
 def main():
   image = pathlib.Path(input("Enter the path of the image you want to load: "))
   img_array = image_to_array(image)
-  img_array = normalize_array(img_array)
-  if len(img_array.shape) == 2:
+  if(img_array.ndim == 3):
+    grayscl_request = input("Would you like to convert to grayscale? ")
+    if grayscl_request.lower() in ['yes']:
+      img_array = grayscale_conversion(img_array)
+  
+  if img_array.ndim == 2:
     plt.imshow(img_array, cmap='gray')
   else:
     plt.imshow(img_array)
