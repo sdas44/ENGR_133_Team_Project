@@ -88,10 +88,10 @@ def linearization_array(arr):
         
 def grayscale_conversion(arr):
   arr = normalize_array_255(arr)
-  gry_arry = np.zeros((arr.shape[0], arr.shape[1]), dtype=np.uint8)
+  gry_arry = np.zeros((arr.shape[0], arr.shape[1]))
   for i in range(arr.shape[0]):
     for j in range(arr.shape[1]):
-      gry_arry[i][j] = int(0.299 * arr[i][j][0] + 0.587 * arr[i][j][1] + 0.114 * arr[i][j][2])
+      gry_arry[i][j] = int(0.2126 * arr[i][j][0] + 0.7152 * arr[i][j][1] + 0.0722 * arr[i][j][2])
       
   return gry_arry
 

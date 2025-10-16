@@ -53,8 +53,8 @@ def clean_image(arr):
       print(f"Resized image to: ({100}, {int(100 / aspect_ratio)}, {arr.shape[2]-1})")
     else:
       print(f"Resized image to: ({100}, {int(100 / aspect_ratio)})")
-    resized_image = img.resize((100, 100 / aspect_ratio), Image.Resampling.BILINEAR)
-    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image = img.resize((100 / aspect_ratio, 100), Image.Resampling.BILINEAR)
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
   elif arr.shape[0] < arr.shape[1]:
@@ -62,8 +62,8 @@ def clean_image(arr):
       print(f"Resized image to: ({int(100 * aspect_ratio)}, {100}, {arr.shape[2]-1})")
     else:
       print(f"Resized image to: ({int(100 * aspect_ratio)}, {100})")
-    resized_image = img.resize((int(100 * aspect_ratio), 100), Image.Resampling.BILINEAR)
-    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image = img.resize((100, int(100 * aspect_ratio)), Image.Resampling.BILINEAR)
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
   else:
@@ -72,7 +72,7 @@ def clean_image(arr):
     else:
       print(f"Resized image to: ({100}, {100})")
     resized_image = img.resized((100, 100), Image.Resampling.BILINEAR)
-    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, "#0000")
+    resized_image = ImageOps.pad(resized_image, (100,100), Image.Resampling.BILINEAR, color="#000")
     resized_image_arr = np.array(resized_image)
     return resized_image_arr
 
