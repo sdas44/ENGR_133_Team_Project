@@ -36,16 +36,16 @@ Academic Integrity Statement:
 import pathlib
 import numpy as np
 from PIL import Image, ImageOps
-from tp1_team_1_5 import load_img
+from checkpoint1.tp1_team_1_5 import load_img
 import matplotlib.pyplot as plt
 
 def clean_image(arr):
   # resize the image to fit within 100x100 canvas
   # check to see whether its grey scale or color
-  if arr.ndim == 3:
-    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]}, {arr.shape[2]})")
-  else:
-    print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]})")
+  # if arr.ndim == 3:
+  #   print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]}, {arr.shape[2]})")
+  # else:
+  #   print(f"Image shape before cleaning: ({arr.shape[0]}, {arr.shape[1]})")
   aspect_ratio = arr.shape[0] / arr.shape[1]
   img = Image.fromarray(arr)
   
@@ -77,7 +77,7 @@ def main():
   image = pathlib.Path(input("Enter the path of the image you want to clean: "))
   img_array = load_img(image)
   img_array = clean_image(img_array)
-  # return final result in the program
+  # return final result in the program    
   if img_array.ndim == 3:
     print(f"Image shape after cleaning: (100, 100, {img_array.shape[2]})")
   else:
