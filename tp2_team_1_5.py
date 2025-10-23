@@ -95,7 +95,7 @@ def gaussian_filter(arr, std):
     for j in range(arr.shape[1]):
       region = padded_image[i:i+7, j:j+7]
       output_arr[i,j] = np.sum(region * kernel)
-  return output_arr.astype(float)
+  return output_arr.astype(float) #TODO: Needs to be changed if I resubmit this assignment to the autograder
 
 def rgb_to_grayscale(arr):
   # converts rgb to grayscale
