@@ -55,12 +55,12 @@ def sobel_filter(gry_arr):
   
   # create the padded image
   padded_image = np.pad(gry_arr, ((1,1),(1,1)), mode='constant', constant_values=0)
-  print(padded_image)
+  # print(padded_image)
   
   # create the gradient x and y to sum later
-  gradient_x = np.zeros_like(gry_arr)
-  gradient_y = np.zeros_like(gry_arr)
-  final_gradient = np.zeros_like(gry_arr)
+  gradient_x = np.zeros_like(gry_arr, dtype=float)
+  gradient_y = np.zeros_like(gry_arr, dtype=float)
+  final_gradient = np.zeros_like(gry_arr, dtype=float)
   
   # apply gausian kernel to image
   for i in range(gry_arr.shape[0]):
@@ -73,7 +73,7 @@ def sobel_filter(gry_arr):
   # clip and threshold
   final_gradient = np.clip(final_gradient, 0, 255)
   final_gradient = np.where(final_gradient >= 50, 255, 0).astype(np.uint8)
-  print(final_gradient)
+  # print(final_gradient)
   return final_gradient
   
   

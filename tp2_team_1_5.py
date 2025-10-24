@@ -7,7 +7,7 @@ Description:
     This program calculates the actual age in years and seconds from the days elapse since the last birthday
 
 Assignment Information:
-    Assignment:     tp2 task 1
+    Assignment:     tp2 team 1
     Team ID:        LC05, 05
     Author:         Samarth Das, das316@purdue.edu
     Date:           10/9/2025
@@ -108,7 +108,7 @@ def rgb_to_grayscale(arr):
 
 def main():
   STD = 1
-  image = pathlib.Path(input("Enter the path of the image you want to load: "))
+  image = pathlib.Path(input("Enter the path of the image file: "))
   img_array = load_img(image)
   gry_img_array = rgb_to_grayscale(img_array)
   
