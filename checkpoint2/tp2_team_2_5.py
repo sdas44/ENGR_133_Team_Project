@@ -7,7 +7,7 @@ Description:
     This program calculates the actual age in years and seconds from the days elapse since the last birthday
 
 Assignment Information:
-    Assignment:     tp2 task 1
+    Assignment:     tp2 team 2
     Team ID:        LC05, 05
     Author:         Samarth Das, das316@purdue.edu
     Date:           10/9/2025
@@ -80,14 +80,16 @@ def sobel_filter(gry_arr):
   
 
 def main():
+  # asked for the path input
   STD = 1
   image = pathlib.Path(input("Enter the path to the image file: "))
   img_array = load_img(image)
   gry_img_array = rgb_to_grayscale(img_array)
-  
+  # create the gaussian array and go through that array with the sobel
   gaussian_array = gaussian_filter(gry_img_array, STD) # in order for this to work, guassian_array must return an np array of type float otherwise it doesnt work
   sobel_array = sobel_filter(gaussian_array)
   
+  # display the image through matplotlib
   plt.imshow(sobel_array, cmap='gray')
   plt.show()
   

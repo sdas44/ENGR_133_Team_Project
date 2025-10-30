@@ -7,7 +7,7 @@ Description:
     This program calculates the actual age in years and seconds from the days elapse since the last birthday
 
 Assignment Information:
-    Assignment:     tp2 task 1
+    Assignment:     tp2 team 3
     Team ID:        LC05, 05
     Author:         Samarth Das, das316@purdue.edu
     Date:           10/9/2025
@@ -45,42 +45,25 @@ import pandas
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
-def feature_extraction(img_arr):
-  hsv_arr = convert_to_hsv(img_arr)
-  hue_sum = 0
-  hue_std_sum = 0
-  sat_sum = 0
-  sat_std_sum = 0
-  val_sum = 0
-  val_std_sum = 0
-  
-  for i in range(hsv_arr.shape[0]):
-    for j in range(hsv_arr.shape[1]):
-      hue_sum = hue_sum + hsv_arr[i][j][0]
-      sat_sum = sat_sum + hsv_arr[i][j][1]
-      val_sum = val_sum + hsv_arr[i][j][2]
-      
-  hue_avg = hue_sum / (hsv_arr.shape[0] * hsv_arr.shape[1])
-  sat_avg = sat_sum / (hsv_arr.shape[0] * hsv_arr.shape[1])
-  val_avg = val_sum / (hsv_arr.shape[0] * hsv_arr.shape[1])
-  
-  for i in range(hsv_arr.shape[0]):
-    for j in range(hsv_arr.shape[1]):
-      hue_std_sum = hue_std_sum + ( hsv_arr[i][j][0] - hue_avg)**2
-      sat_std_sum = sat_std_sum + ( hsv_arr[i][j][1] - sat_avg)**2
-      val_std_sum = val_std_sum + ( hsv_arr[i][j][2] - val_avg)**2
-  
-  hue_std = math.sqrt(hue_std_sum / (hsv_arr.shape[0] * hsv_arr.shape[1]))
-  sat_std = math.sqrt(sat_std_sum / (hsv_arr.shape[0] * hsv_arr.shape[1]))
-  val_std = math.sqrt(val_std_sum / (hsv_arr.shape[0] * hsv_arr.shape[1]))
-  
-  gry_arr = rgb_to_grayscale(img_arr)
-  gaus_arr = gaussian_filter(gry_arr, 1)
-  circles = detect_circles(gry_arr)
-  lines = count_lines(gaus_arr)
-  print(f"Lines:{lines}")
-  
-  return (hue_avg, hue_std, sat_avg, sat_std, val_avg, val_std, circles, lines)
+def extract_features(img_arr):
+    hsv_arr = convert_to_hsv(img_arr).astype(np.float64)
+    hue = hsv_arr[:,:,0]   # Hue: 0–179 in OpenCV
+    sat = hsv_arr[:,:,1]   # Saturation: 0–255
+    val = hsv_arr[:,:,2]   # Value: 0–255
+
+    hue_avg = np.mean(hue)
+    hue_std = np.std(hue)
+    sat_avg = np.mean(sat)
+    sat_std = np.std(sat)
+    val_avg = np.mean(val)
+    val_std = np.std(val)
+
+    gry_arr = rgb_to_grayscale(img_arr)
+    gaus_arr = gaussian_filter(gry_arr, 1)
+    circles = detect_circles(gry_arr)
+    lines = count_lines(gaus_arr)
+
+    return [hue_avg, hue_std, sat_avg, sat_std, val_avg, val_std, circles, lines]
   
   
 def rgb_to_hsv(r, g , b):
@@ -117,8 +100,7 @@ def rgb_to_hsv(r, g , b):
     return (((hue / 360 * 255)), (saturation * 255), (value * 255))
     
 def convert_to_hsv(arr):
-    #use the rgb_to_hsv function to convert an entire image to hsv
-    hsv_arr = np.zeros_like(arr)
+    hsv_arr = np.zeros((arr.shape[0], arr.shape[1], 3), dtype=float)
     for i in range(arr.shape[0]):
         for j in range(arr.shape[1]):
             r, g, b = arr[i, j]
@@ -205,7 +187,7 @@ def main():
         img_arr = load_img(image_path)
         clean_img_arr = clean_image(img_arr)
         
-        features = feature_extraction(clean_img_arr)
+        features = extract_features(clean_img_arr)
         
         feature_list.append({
             'hue_mean': features[0],
